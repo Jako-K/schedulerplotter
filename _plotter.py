@@ -58,6 +58,6 @@ class Plotter:
         log_check_box = self._get_log_checkbox()
 
         display(widgets.HBox(children=[scheduler_dropdown, log_check_box, exit_buttom]))
-        print("." * 118)
+        print("." * 115)
         if self.active_scheduler:
             self.active_scheduler.update_display(self.semilogy)

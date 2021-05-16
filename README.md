@@ -10,23 +10,10 @@ from schedulerplotter import Plotter
 Plotter();
 ```
 
-
-    HBox(children=(Dropdown(description='Scheduler', index=3, options=('LambdaLR', 'MultiplicativeLR', 'StepLR', '…
-
-
-    ......................................................................................................................
-    
-
-
-    VBox(children=(FloatLogSlider(value=0.0001, continuous_update=False, description='Learning rate', layout=Layou…
-
-
-
-![png](output_2_3.png)
-
+![png](img/scheduler_image.png)
 
 ## Get scheduler
-Ones you're happy with the settings just click the `Get scheduler` buttom and use the printed values to construct the scheduler you have created.
+Ones you're happy with the settings just click the `Get scheduler` button and use the printed values to construct the scheduler you have created.
 
 
 ```python

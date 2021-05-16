@@ -21,7 +21,7 @@ class Scheduler:
         self.layout_width = 500
         self.widget_extra = dict(continuous_update=False,
                                  layout={'width': f'{self.layout_width}px'},
-                                 style={'description_width': f'{self.description_width}px'}
+                                 style={'description_width': f'{self.description_width}px', "color":"lightblue"}
                                  )
 
         self._get_widget_name = self._init_get_widget_name()
