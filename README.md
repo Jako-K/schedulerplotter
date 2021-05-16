@@ -1,4 +1,4 @@
-# Why build this repo?
+# What's the point of this repository?
 I find the whole process of picking and tuning learning rate schedulers tedious and somewhat frustrating. I came to the conclusion that this was primarily due to the lack of interactive options. I feel like a python package which runs directly in jupyter notebook would be most beneficial, and since i couldn't find any proper solutions online I decided to make my own.  
 
 # Demo
