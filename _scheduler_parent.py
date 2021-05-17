@@ -71,7 +71,7 @@ class Scheduler:
             ax.plot(learning_rates, '-o')
             ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
 
-        ax.set_title(f"{self.name} - learning rate over {self.epochs} epochs")
+        ax.set_title(f"{self.name} - Learning rate over {self.epochs} epochs")
         ax.set_ylabel("Learning rate")
         ax.set_xlabel("Epoch")
 

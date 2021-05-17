@@ -134,13 +134,13 @@ class WidgetCosineAnnealingLR(Scheduler):
 
     def _init(self):
         T_max_slider = widgets.IntSlider(value=1, max=20, step=1,
-                                         description="Max iterations",
+                                         description="T max",
                                          **self.widget_extra
                                          )
 
         eta_min_slider = widgets.FloatLogSlider(value=self.lr * 10,
                                                 min=-10, max=1, step=0.001,
-                                                description="Learning rate",
+                                                description="Eta min",
                                                 readout_format='.2e',
                                                 **self.widget_extra
                                                 )
