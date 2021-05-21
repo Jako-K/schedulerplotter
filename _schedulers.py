@@ -151,4 +151,52 @@ class WidgetCosineAnnealingLR(Scheduler):
         self._get_widget_name[eta_min_slider] = "eta_min"
 
 
-__all__ = ["WidgetLambdaLR", "WidgetMultiplicativeLR", "WidgetStepLR", "WidgetCosineAnnealingLR"]
+class WidgetCosineAnnealingWarmRestarts(Scheduler):
+    def __init__(self, refresh_func):
+        """
+        DESCRIPTION COPIED FROM PYTORCH: https://pytorch.org/docs/stable/optim.html
+
+        torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0, T_mult=1, eta_min=0, last_epoch=-1, verbose=False)
+
+        Set the learning rate of each parameter group using a cosine annealing schedule,
+        where eta_{max} is set to the initial lr and T_{cur} is the number of epochs since the last restart in SGDR
+        """
+
+        super().__init__(name="CosineAnnealingWarmRestarts", refresh_func=refresh_func)
+        self.scheduler_class = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts
+
+    def _init(self):
+        T_0_slider = widgets.IntSlider(value=5, min=1, max=100, step=1,
+                                       description="T_0",
+                                       **self.widget_extra
+                                       )
+
+        eta_min_slider = widgets.FloatLogSlider(value=self.lr * 10,
+                                                min=-10, max=1, step=0.001,
+                                                description="Eta min",
+                                                readout_format='.2e',
+                                                **self.widget_extra
+                                                )
+
+        T_mult_slider = widgets.IntSlider(value=1, min=0, step=1,
+                                       description="T_mult",
+                                       **self.widget_extra
+                                       )
+
+        self.kwargs = {"eta_min": eta_min_slider.value, 
+                       "T_0": T_0_slider.value, 
+                       "T_mult": T_mult_slider.value
+                       }
+
+        self._get_widget_name[T_0_slider] = "T_0"
+        self._get_widget_name[eta_min_slider] = "eta_min"
+        self._get_widget_name[T_mult_slider] = "T_mult"
+
+
+
+__all__ = ["WidgetLambdaLR", 
+           "WidgetMultiplicativeLR", 
+           "WidgetStepLR", 
+           "WidgetCosineAnnealingLR", 
+           "WidgetCosineAnnealingWarmRestarts",
+           ]

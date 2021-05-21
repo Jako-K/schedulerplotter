@@ -1,5 +1,6 @@
 .idea
 .ipynb_checkpoints
+notes
 __pycache__
 venv
 testing

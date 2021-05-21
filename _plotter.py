@@ -9,7 +9,9 @@ class Plotter:
                            "MultiplicativeLR": WidgetMultiplicativeLR,
                            "StepLR": WidgetStepLR,
                            "CosineAnnealingLR": WidgetCosineAnnealingLR,
+                           "CosineAnnealingWarmRestarts": WidgetCosineAnnealingWarmRestarts,
                            }
+
         self.terminate = False
         self.semilogy = False
         self._refresh()

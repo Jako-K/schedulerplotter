@@ -1,0 +1,3 @@
+Find out how a requirement file should be organized, perhaps make a new env. and see which package are true necessary.
+
+Adjust the Get scheduler button such that it align with the border of the plots, it looks super wierd now
