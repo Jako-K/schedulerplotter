@@ -10,6 +10,10 @@ class Plotter:
                            "StepLR": WidgetStepLR,
                            "CosineAnnealingLR": WidgetCosineAnnealingLR,
                            "CosineAnnealingWarmRestarts": WidgetCosineAnnealingWarmRestarts,
+                           "MultiStepLR": WidgetMultiStepLR,
+                           "ExponentialLR": WidgetExponentialLR,
+                           "CyclicLR": WidgetCyclicLR,
+                           "OneCycleLR": WidgetOneCycleLR
                            }
 
         self.terminate = False
@@ -59,7 +63,7 @@ class Plotter:
         scheduler_dropdown = self._get_scheduler_dropdown()
         log_check_box = self._get_log_checkbox()
 
-        display(widgets.HBox(children=[scheduler_dropdown, log_check_box, exit_buttom]))
+        display( widgets.HBox(children=[scheduler_dropdown, log_check_box, exit_buttom]) )
         print("." * 115)
         if self.active_scheduler:
             self.active_scheduler.update_display(self.semilogy)

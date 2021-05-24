@@ -12,11 +12,10 @@ class Scheduler:
         self.name = name
         self.refresh = refresh_func
         self.lr = 1e-4
-        self.epochs = 10
+        self.steps = 10
         self.scheduler_class = None
         self.kwargs = None
         self._to_display = []
-
         self.description_width = 125
         self.layout_width = 500
         self.widget_extra = dict(continuous_update=False,
@@ -31,23 +30,15 @@ class Scheduler:
         raise NotImplementedError
 
     def _set_kwargs(self, param_name, value):
-        """This is only here to allow custom parameter update implementation e.g. lambda epoch: value**epoch in LambdaLR"""
+        """This is only here to allow custom parameter updates e.g. `lambda epoch: value**epoch` in LambdaLR"""
         self.kwargs[param_name] = value
 
     def _init_get_widget_name(self):
-        slider = widgets.FloatLogSlider(value=self.lr,
-                                        min=-10, max=1, step=0.001,
-                                        description="Learning rate",
-                                        readout_format='.2e',
-                                        **self.widget_extra
-                                        )
-
-        slider2 = widgets.IntSlider(value=self.epochs,
-                                    min=1, max=100, step=1,
-                                    description="epochs",
-                                    **self.widget_extra
-                                    )
-        return {slider: "learning_rate", slider2: "epochs"}
+        slider = widgets.FloatLogSlider(value=self.lr, min=-10, max=1, step=0.001,
+                                        description="learning rate", readout_format='.2e',**self.widget_extra)
+        slider2 = widgets.IntSlider(value=self.steps, min=1, max=5000, step=1,
+                                    description="steps (e.g. epochs)", **self.widget_extra)
+        return {slider: "learning_rate", slider2: "steps"}
 
     def _get_optimizer(self):
         dummy_model = nn.Linear(1, 1)
@@ -60,18 +51,18 @@ class Scheduler:
         scheduler = self.scheduler_class(self._get_optimizer(), **self.kwargs)
         learning_rates = []
 
-        for epoch in range(1, self.epochs):
+        for epoch in range(1, self.steps):
             learning_rates.append(scheduler.optimizer.param_groups[0]["lr"])
             scheduler.step()
 
         fig, ax = plt.subplots(figsize=(15, 5))
         if semilogy:
-            ax.semilogy(learning_rates, '-o')
+            ax.semilogy(learning_rates) if self.steps>100 else ax.semilogy(learning_rates, '-o')
         else:
-            ax.plot(learning_rates, '-o')
+            ax.plot(learning_rates) if self.steps>100 else ax.plot(learning_rates, '-o')
             ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
 
-        ax.set_title(f"{self.name} - Learning rate over {self.epochs} epochs")
+        ax.set_title(f"{self.name} - Learning rate over {self.steps} steps")
         ax.set_ylabel("Learning rate")
         ax.set_xlabel("Epoch")
 
@@ -92,8 +83,8 @@ class Scheduler:
 
         if widget_changed == "learning_rate":
             self.lr = value_changed
-        elif widget_changed == "epochs":
-            self.epochs = value_changed
+        elif widget_changed == "steps":
+            self.steps = value_changed
         else:
             self._set_kwargs(widget_changed, value_changed)
 
