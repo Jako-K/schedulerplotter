@@ -11,7 +11,6 @@ class WidgetLambdaLR(Scheduler):
         """
         DESCRIPTION COPIED FROM PYTORCH: https://pytorch.org/docs/stable/optim.html
 
-        Sets the learning rate of each parameter group to the initial lr times a given function. When last_epoch=-1, sets initial lr as lr.
         torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda, last_epoch=-1, verbose=False)
         """
         super().__init__(name="LambdaLR", refresh_func=refresh_func)
@@ -53,9 +52,6 @@ class WidgetMultiplicativeLR(Scheduler):
         DESCRIPTION COPIED FROM PYTORCH: https://pytorch.org/docs/stable/optim.html
 
         torch.optim.lr_scheduler.MultiplicativeLR(optimizer, lr_lambda, last_epoch=-1, verbose=False)
-
-        Multiply the learning rate of each parameter group by the factor given in the specified function.
-        When last_epoch=-1, sets initial lr as lr.
         """
         super().__init__(name="MultiplicativeLR", refresh_func=refresh_func)
         self.scheduler_class = torch.optim.lr_scheduler.MultiplicativeLR
@@ -77,7 +73,6 @@ class WidgetMultiplicativeLR(Scheduler):
 
     # Overrides
     def _set_kwargs(self, param_name, value):
-        """This is only here to allow custom parameter updates e.g. lambda epoch: value**epoch in LambdaLR"""
         self.kwargs[param_name] = self._get_lambda(value)
 
     def _init(self):
@@ -97,21 +92,17 @@ class WidgetStepLR(Scheduler):
         DESCRIPTION COPIED FROM PYTORCH: https://pytorch.org/docs/stable/optim.html
 
         torch.optim.lr_scheduler.StepLR(optimizer, step_size, gamma=0.1, last_epoch=-1, verbose=False)
-
-        Decays the learning rate of each parameter group by gamma every step_size epochs.
-        Notice that such decay can happen simultaneously with other changes to the learning rate from outside this scheduler.
-        When last_epoch=-1, sets initial lr as lr.
         """
         super().__init__(name="StepLR", refresh_func=refresh_func)
         self.scheduler_class = torch.optim.lr_scheduler.StepLR
 
     def _init(self):
-        gamma_slider = widgets.FloatSlider(value=0.1, max=1, step=0.01,
+        gamma_slider = widgets.FloatSlider(value=0.1, min=1, max=1, step=0.01,
                                            description="gamma",
                                            **self.widget_extra
                                            )
 
-        step_size_slider = widgets.IntSlider(value=1, max=self.steps, step=1,
+        step_size_slider = widgets.IntSlider(value=1, max=5000, step=1,
                                              description="Step size",
                                              **self.widget_extra
                                              )
@@ -127,16 +118,13 @@ class WidgetCosineAnnealingLR(Scheduler):
         DESCRIPTION COPIED FROM PYTORCH: https://pytorch.org/docs/stable/optim.html
 
         torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max, eta_min=0, last_epoch=-1, verbose=False)
-
-        Set the learning rate of each parameter group using a cosine annealing schedule,
-        where eta_{max} is set to the initial lr and T_{cur} is the number of epochs since the last restart in SGDR
         """
 
         super().__init__(name="CosineAnnealingLR", refresh_func=refresh_func)
         self.scheduler_class = torch.optim.lr_scheduler.CosineAnnealingLR
 
     def _init(self):
-        T_max_slider = widgets.IntSlider(value=1, max=20, step=1,
+        T_max_slider = widgets.IntSlider(value=1, min=1, max=20, step=1,
                                          description="T max",
                                          **self.widget_extra
                                          )
@@ -160,9 +148,6 @@ class WidgetCosineAnnealingWarmRestarts(Scheduler):
         DESCRIPTION COPIED FROM PYTORCH: https://pytorch.org/docs/stable/optim.html
 
         torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0, T_mult=1, eta_min=0, last_epoch=-1, verbose=False)
-
-        Set the learning rate of each parameter group using a cosine annealing schedule,
-        where eta_{max} is set to the initial lr and T_{cur} is the number of epochs since the last restart in SGDR
         """
 
         super().__init__(name="CosineAnnealingWarmRestarts", refresh_func=refresh_func)
@@ -203,11 +188,6 @@ class WidgetMultiStepLR(Scheduler):
         DESCRIPTION COPIED FROM PYTORCH: https://pytorch.org/docs/stable/optim.html
 
         torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones, gamma=0.1, last_epoch=-1, verbose=False)
-
-        Decays the learning rate of each parameter group by gamma once the number of epoch reaches one of the milestones. 
-        Notice that such decay can happen simultaneously with other changes to the learning rate from outside this scheduler. 
-        When last_epoch=-1, sets initial lr as lr.
-        
         """
 
         super().__init__(name="MultiStepLR", refresh_func=refresh_func)
@@ -246,8 +226,6 @@ class WidgetExponentialLR(Scheduler):
         DESCRIPTION COPIED FROM PYTORCH: https://pytorch.org/docs/stable/optim.html
 
         torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma, last_epoch=-1, verbose=False)
-
-        Decays the learning rate of each parameter group by gamma every epoch. When last_epoch=-1, sets initial lr as lr.
         """
 
         super().__init__(name="ExponentialLR", refresh_func=refresh_func)
@@ -271,14 +249,6 @@ class WidgetCyclicLR(Scheduler):
                                           mode='triangular', gamma=1.0, scale_fn=None, scale_mode='cycle',
                                           cycle_momentum=True, base_momentum=0.8, max_momentum=0.9, last_epoch=-1,
                                           verbose=False)
-
-        Sets the learning rate of each parameter group according to cyclical learning rate policy (CLR).
-        The policy cycles the learning rate between two boundaries with a constant frequency,
-        as detailed in the paper Cyclical Learning Rates for Training Neural Networks.
-        The distance between the two boundaries can be scaled on a per-iteration or per-cycle basis.
-
-        Cyclical learning rate policy changes the learning rate after every batch.
-        ´step´ should be called after a batch has been used for training.
         """
 
         super().__init__(name="CyclicLR", refresh_func=refresh_func)
@@ -317,33 +287,13 @@ class WidgetOneCycleLR(Scheduler):
                                             base_momentum=0.85, max_momentum=0.95,
                                             div_factor=25.0, final_div_factor=10000.0,
                                             three_phase=False, last_epoch=-1, verbose=False)
-
-        Sets the learning rate of each parameter group according to the 1cycle learning rate policy.
-        The 1cycle policy anneals the learning rate from an initial learning rate to some maximum learning rate and
-        then from that maximum learning rate to some minimum learning rate much lower than the initial learning rate.
-        This policy was initially described in the paper Super-Convergence:
-        Very Fast Training of Neural Networks Using Large Learning Rates.
-
-        The 1cycle learning rate policy changes the learning rate after every batch.
-        step should be called after a batch has been used for training.
-
-        This scheduler is not chainable.
-        Note also that the total number of steps in the cycle can be determined in one of two ways
-        (listed in order of precedence):
-        1.) A value for total_steps is explicitly provided.
-        2.) A number of epochs (epochs) and a number of steps per epoch (steps_per_epoch) are provided.
-            In this case, the number of total steps is inferred by total_steps = epochs * steps_per_epoch
-
-        You must either provide a value for total_steps or provide a value for both epochs and steps_per_epoch.
-        The default behaviour of this scheduler follows the fastai implementation of 1cycle, which claims that
-        “unpublished work has shown even better results by using only two phases”.
-        To mimic the behaviour of the original paper instead, set three_phase=True.
         """
 
         super().__init__(name="OneCycleLR", refresh_func=refresh_func)
         self.scheduler_class = torch.optim.lr_scheduler.OneCycleLR
 
-
+    def _refresh_hook(self):
+        self.kwargs["total_steps"] = self.steps
 
     def _init(self):
         max_lr_slider = widgets.FloatLogSlider(value=self.lr*10, min=-10, max=1, step=0.001, description="max_lr", readout_format='.2e', **self.widget_extra)
@@ -352,7 +302,7 @@ class WidgetOneCycleLR(Scheduler):
         cycle_momentum_dropdown = widgets.Dropdown(description="cycle_momentum", value=True, options=[True, False], layout={'width': f'{self.layout_width-80}px'}, style = self.widget_extra["style"])
         base_momentum_slider = widgets.FloatSlider(value=0.85, min=0, max=2, step=0.001, description="base_momentum", **self.widget_extra)
         max_momentum_slider = widgets.FloatSlider(value=0.95, min=0, max=2, step=0.001, description="max_momentum", **self.widget_extra)
-        div_factor_slider = widgets.FloatSlider(value=25.0, min=0, max=1000, step=1, description="div_factor", **self.widget_extra)
+        div_factor_slider = widgets.FloatSlider(value=25.0, min=0.001, max=1000, step=1, description="div_factor", **self.widget_extra)
         final_div_factor_slider = widgets.FloatSlider(value=10000, min=-10, max=20000, step=100, description="final_div_factor ", readout_format='.2e', **self.widget_extra)
         three_phase_dropdown = widgets.Dropdown(description="three_phase", value=False, options=[True, False], layout={'width': f'{self.layout_width-80}px'}, style = self.widget_extra["style"])
 
@@ -366,9 +316,7 @@ class WidgetOneCycleLR(Scheduler):
         for name, slider in {names[i]:sliders[i] for i in range(len(sliders))}.items():
             self.kwargs[name] = slider.value
             self._get_widget_name[slider] = name
-
         self.kwargs["total_steps"] = self.steps
-
 
 
 __all__ = ["WidgetLambdaLR",

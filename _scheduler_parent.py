@@ -33,6 +33,10 @@ class Scheduler:
         """This is only here to allow custom parameter updates e.g. `lambda epoch: value**epoch` in LambdaLR"""
         self.kwargs[param_name] = value
 
+    def _refresh_hook(self):
+        """This is only here to allow custom updates"""
+        pass
+
     def _init_get_widget_name(self):
         slider = widgets.FloatLogSlider(value=self.lr, min=-10, max=1, step=0.001,
                                         description="learning rate", readout_format='.2e',**self.widget_extra)
@@ -88,6 +92,7 @@ class Scheduler:
         else:
             self._set_kwargs(widget_changed, value_changed)
 
+        self._refresh_hook()
         self.refresh()
 
     def update_display(self, semilogy):
