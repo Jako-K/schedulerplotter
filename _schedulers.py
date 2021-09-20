@@ -3,14 +3,12 @@ from ._scheduler_parent import Scheduler
 import ipywidgets as widgets
 import torch
 
-
 # TODO: Find a solution for ReduceLROnPlateau
 
 class WidgetLambdaLR(Scheduler):
     def __init__(self, refresh_func):
         """
         DESCRIPTION COPIED FROM PYTORCH: https://pytorch.org/docs/stable/optim.html
-
         torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda, last_epoch=-1, verbose=False)
         """
         super().__init__(name="LambdaLR", refresh_func=refresh_func)
@@ -50,7 +48,6 @@ class WidgetMultiplicativeLR(Scheduler):
     def __init__(self, refresh_func):
         """
         DESCRIPTION COPIED FROM PYTORCH: https://pytorch.org/docs/stable/optim.html
-
         torch.optim.lr_scheduler.MultiplicativeLR(optimizer, lr_lambda, last_epoch=-1, verbose=False)
         """
         super().__init__(name="MultiplicativeLR", refresh_func=refresh_func)
@@ -90,19 +87,18 @@ class WidgetStepLR(Scheduler):
     def __init__(self, refresh_func):
         """
         DESCRIPTION COPIED FROM PYTORCH: https://pytorch.org/docs/stable/optim.html
-
         torch.optim.lr_scheduler.StepLR(optimizer, step_size, gamma=0.1, last_epoch=-1, verbose=False)
         """
         super().__init__(name="StepLR", refresh_func=refresh_func)
         self.scheduler_class = torch.optim.lr_scheduler.StepLR
 
     def _init(self):
-        gamma_slider = widgets.FloatSlider(value=0.1, min=1, max=1, step=0.01,
+        gamma_slider = widgets.FloatSlider(value=0.9, min=0.0, max=1.0, step=0.01,
                                            description="gamma",
                                            **self.widget_extra
                                            )
 
-        step_size_slider = widgets.IntSlider(value=1, max=5000, step=1,
+        step_size_slider = widgets.IntSlider(value=1, max=100, step=1,
                                              description="Step size",
                                              **self.widget_extra
                                              )
@@ -116,7 +112,6 @@ class WidgetCosineAnnealingLR(Scheduler):
     def __init__(self, refresh_func):
         """
         DESCRIPTION COPIED FROM PYTORCH: https://pytorch.org/docs/stable/optim.html
-
         torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max, eta_min=0, last_epoch=-1, verbose=False)
         """
 
@@ -146,7 +141,6 @@ class WidgetCosineAnnealingWarmRestarts(Scheduler):
     def __init__(self, refresh_func):
         """
         DESCRIPTION COPIED FROM PYTORCH: https://pytorch.org/docs/stable/optim.html
-
         torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0, T_mult=1, eta_min=0, last_epoch=-1, verbose=False)
         """
 
@@ -186,7 +180,6 @@ class WidgetMultiStepLR(Scheduler):
     def __init__(self, refresh_func):
         """
         DESCRIPTION COPIED FROM PYTORCH: https://pytorch.org/docs/stable/optim.html
-
         torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones, gamma=0.1, last_epoch=-1, verbose=False)
         """
 
@@ -219,12 +212,14 @@ class WidgetMultiStepLR(Scheduler):
         self.kwargs["milestones"] = [int(number) for number in self.kwargs["milestones"].split(",")]
         self.refresh()
 
+    def _refresh_hook(self):
+        self._handle_milestones_submit(None)
+
 
 class WidgetExponentialLR(Scheduler):
     def __init__(self, refresh_func):
         """
         DESCRIPTION COPIED FROM PYTORCH: https://pytorch.org/docs/stable/optim.html
-
         torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma, last_epoch=-1, verbose=False)
         """
 
@@ -232,7 +227,7 @@ class WidgetExponentialLR(Scheduler):
         self.scheduler_class = torch.optim.lr_scheduler.ExponentialLR
 
     def _init(self):
-        gamma_slider = widgets.FloatSlider(value=0.1, min=0, max=1, step=0.001,
+        gamma_slider = widgets.FloatSlider(value=0.9, min=0, max=1, step=0.001,
                                            description="gamma", **self.widget_extra
                                            )
 
@@ -244,7 +239,6 @@ class WidgetCyclicLR(Scheduler):
     def __init__(self, refresh_func):
         """
         DESCRIPTION COPIED FROM PYTORCH: https://pytorch.org/docs/stable/optim.html
-
         torch.optim.lr_scheduler.CyclicLR(optimizer, base_lr, max_lr, step_size_up=2000, step_size_down=None,
                                           mode='triangular', gamma=1.0, scale_fn=None, scale_mode='cycle',
                                           cycle_momentum=True, base_momentum=0.8, max_momentum=0.9, last_epoch=-1,
@@ -258,9 +252,9 @@ class WidgetCyclicLR(Scheduler):
     def _init(self):
         base_lr_slider = widgets.FloatLogSlider(value=self.lr, min=-10, max=1, step=0.001, description="base_lr", readout_format='.2e', **self.widget_extra)
         max_lr_slider = widgets.FloatLogSlider(value=self.lr*10, min=-10, max=1, step=0.001, description="max_lr", readout_format='.2e', **self.widget_extra)
-        step_size_up_slider = widgets.IntSlider(value=1, min=1, max=2500, step=1, description="step_size_up", **self.widget_extra )
-        step_size_down_slider = widgets.IntSlider(value=1, min=1, max=2500, step=1, description="step_size_down", **self.widget_extra )
-        mode_dropdown = widgets.Dropdown(description="Mode",value="triangular",options=["triangular", "triangular2", "exp_range"],layout={'width': f'{self.layout_width-80}px'},style = self.widget_extra["style"])
+        step_size_up_slider = widgets.IntSlider(value=1, min=1, max=100, step=1, description="step_size_up", **self.widget_extra )
+        step_size_down_slider = widgets.IntSlider(value=1, min=1, max=100, step=1, description="step_size_down", **self.widget_extra )
+        mode_dropdown = widgets.Dropdown(description="Mode",value="triangular2",options=["triangular", "triangular2", "exp_range"],layout={'width': f'{self.layout_width-80}px'},style = self.widget_extra["style"])
         gamma_slider = widgets.FloatSlider(value=0.95, min=0, max=1, step=0.001, description="gamma", **self.widget_extra)
         cycle_momentum_slider = widgets.Dropdown(description="cycle_momentum", value=True, options=[True, False], layout={'width': f'{self.layout_width-80}px'}, style = self.widget_extra["style"])
         base_momentum_slider = widgets.FloatSlider(value=0.8, min=0, max=2, step=0.001, description="base_momentum", **self.widget_extra)
@@ -281,7 +275,6 @@ class WidgetOneCycleLR(Scheduler):
     def __init__(self, refresh_func):
         """
         DESCRIPTION COPIED FROM PYTORCH: https://pytorch.org/docs/stable/optim.html
-
         torch.optim.lr_scheduler.OneCycleLR(optimizer, max_lr, total_steps=None, epochs=None, steps_per_epoch=None,
                                             pct_start=0.3, anneal_strategy='cos', cycle_momentum=True,
                                             base_momentum=0.85, max_momentum=0.95,

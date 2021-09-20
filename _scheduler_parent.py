@@ -40,7 +40,7 @@ class Scheduler:
     def _init_get_widget_name(self):
         slider = widgets.FloatLogSlider(value=self.lr, min=-10, max=1, step=0.001,
                                         description="learning rate", readout_format='.2e',**self.widget_extra)
-        slider2 = widgets.IntSlider(value=self.steps, min=1, max=5000, step=1,
+        slider2 = widgets.IntSlider(value=self.steps, min=1, max=100, step=1,
                                     description="steps (e.g. epochs)", **self.widget_extra)
         return {slider: "learning_rate", slider2: "steps"}
 
